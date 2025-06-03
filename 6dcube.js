@@ -1,81 +1,88 @@
-// 6dcube.js
-const canvas = document.createElement("canvas");
-const ctx = canvas.getContext("2d");
-document.getElementById("cube-container").appendChild(canvas);
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-
-const points = [];
-
-// Generate all 64 points of a 6D hypercube (2^6)
-for (let i = 0; i < 64; i++) {
-  const coords = [];
-  for (let j = 0; j < 6; j++) {
-    coords.push((i >> j) & 1 ? 1 : -1);
-  }
-  points.push(coords);
+function vecToMatrix(v) {
+    let m = [];
+    for (let i = 0; i < 3; i++) {
+        m[i] = [];
+    }
+    m[0][0] = v.x;
+    m[1][0] = v.y;
+    m[2][0] = v.z;
+    return m;
 }
 
-// Rotation matrix helpers
-function rotate(point, dim1, dim2, angle) {
-  const c = Math.cos(angle);
-  const s = Math.sin(angle);
-  const temp1 = point[dim1] * c - point[dim2] * s;
-  const temp2 = point[dim1] * s + point[dim2] * c;
-  point[dim1] = temp1;
-  point[dim2] = temp2;
+function vec4ToMatrix(v) {
+    let m = vecToMatrix(v);
+    m[3] = [];
+    m[3][0] = v.w;
+    return m;
 }
 
-// Project 6D point to 2D
-function project(point) {
-  // Copy the point so original isn't modified
-  const p = [...point];
-
-  // Apply rotations in several planes
-  rotate(p, 0, 1, time * 0.3);
-  rotate(p, 2, 3, time * 0.2);
-  rotate(p, 4, 5, time * 0.4);
-  rotate(p, 0, 2, time * 0.1);
-  rotate(p, 1, 5, time * 0.15);
-
-  // Project 6D → 3D
-  let scale3d = 300 / (4 + p[5]); // Perspective
-  let x3d = p[0] * scale3d;
-  let y3d = p[1] * scale3d;
-  let z3d = p[2] * scale3d;
-
-  // Project 3D → 2D
-  let scale2d = 300 / (4 + z3d);
-  return {
-    x: canvas.width / 2 + x3d * scale2d,
-    y: canvas.height / 2 + y3d * scale2d
-  };
+function matrixToVec(m) {
+    return createVector(m[0][0], m[1][0], m[2][0]);
 }
 
-let time = 0;
-function draw() {
-  time += 0.01;
-  ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  const projected = points.map(project);
-
-  ctx.fillStyle = "white";
-  for (let i = 0; i < projected.length; i++) {
-    const p = projected[i];
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  requestAnimationFrame(draw);
+function matrixToVec4(m) {
+    let r = new P4Vector(m[0][0], m[1][0], m[2][0], 0);
+    if (m.length > 3) {
+        r.w = m[3][0];
+    }
+    return r;
 }
 
-draw();
+function logMatrix(m) {
+    const cols = m[0].length;
+    const rows = m.length;
+    console.log(rows + "x" + cols);
+    console.log("----------------");
+    let s = '';
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            s += (m[i][j] + " ");
+        }
+        console.log(s);
+    }
+    console.log();
+}
 
+function matmulvec(a, vec) {
+    let m = vecToMatrix(vec);
+    let r = matmul(a, m);
+    return matrixToVec(r);
+}
+
+function matmulvec4(a, vec) {
+    let m = vec4ToMatrix(vec);
+    let r = matmul(a, m);
+    return matrixToVec4(r);
+}
+
+function matmul(a, b) {
+    if (b instanceof p5.Vector) {
+        return matmulvec(a, b);
+    }
+    if (b instanceof P4Vector) {
+        return matmulvec4(a, b);
+    }
+
+    let colsA = a[0].length;
+    let rowsA = a.length;
+    let colsB = b[0].length;
+    let rowsB = b.length;
+
+    if (colsA !== rowsB) {
+        console.error("Columns of A must match rows of B");
+        return null;
+    }
+
+    result = [];
+    for (let j = 0; j < rowsA; j++) {
+        result[j] = [];
+        for (let i = 0; i < colsB; i++) {
+            let sum = 0;
+            for (let n = 0; n < colsA; n++) {
+                sum += a[j][n] * b[n][i];
+            }
+            result[j][i] = sum;
+        }
+    }
+    return result;
+}
