@@ -1,19 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
- <head><meta charset="UTF-8"  />
- <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- <title>Main | the preston sunshine website</title>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>普雷斯顿阳光网站</title>
   <style>
-    body {
+    body, html {
       margin: 0;
-      padding: 1;
-      font-family:  'Cascadia Code', monospace;
-      backround: #0a0a0a;
-      color: #00ffcc;
-      dispay: flex;
-      flex-direction: column;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+    }
+
+    .background {
+      background: url('background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      height: 100%;
+      display: flex;
+      justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      text-align: center;
+    }
+
+    .content {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 2rem 3rem;
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1.2em;
     }
   </style>
- </head>
+</head>
+<body>
+  <div class="background">
+    <div class="content">
+      <h1>欢迎来到普雷斯顿阳光网站</h1>
+      <p>为您带来好心情、灿烂阳光和美好的一天 ☀️</p>
+    </div>
+  </div>
+</body>
+</html>
