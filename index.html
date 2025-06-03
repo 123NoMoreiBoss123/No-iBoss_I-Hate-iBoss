@@ -14,7 +14,7 @@
     }
 
     .background {
-      background: url('backround.jpeg') no-repeat center center fixed;
+      background: url('background.jpg') no-repeat center center fixed;
       background-size: cover;
       height: 100%;
       display: flex;
@@ -23,11 +23,20 @@
       text-align: center;
     }
 
-    .content {
+    .button-box {
       background: rgba(0, 0, 0, 0.5);
       padding: 2rem 3rem;
       border-radius: 20px;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+      text-decoration: none;
+      color: white;
+      transition: background 0.3s, transform 0.2s;
+      display: inline-block;
+    }
+
+    .button-box:hover {
+      background: rgba(0, 0, 0, 0.7);
+      transform: scale(1.03);
     }
 
     h1 {
@@ -37,15 +46,16 @@
 
     p {
       font-size: 1.2em;
+      margin: 0;
     }
   </style>
 </head>
 <body>
   <div class="background">
-    <div class="content">
+    <a href="main.html" class="button-box">
       <h1>欢迎来到普雷斯顿阳光网站</h1>
-      <p>为您带来好心情、灿烂阳光和美好的一天 ☀️</p>
-    </div>
+      <p>点击进入主页面 ☀️</p>
+    </a>
   </div>
 </body>
 </html>
